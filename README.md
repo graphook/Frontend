@@ -18,3 +18,12 @@ npm run dev
 npm run build
 npm start
 ```
+
+## Evironment Variables
+```
+API_URL=http://localhost:3030
+CLIENT_SECRET=...
+ENV=dev
+NODE_ENV=development
+SESSION_SECRET=...
+```

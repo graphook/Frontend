@@ -2,7 +2,6 @@ import React from 'react';
 import {IndexRoute, Route} from 'react-router';
 import Layout from './components/layout/Layout.jsx';
 
-import Home from './components/home/Home.jsx';
 import Search from './components/search/Search.jsx';
 import Set from './components/set/Set.jsx';
 import SetCreate from './components/set/SetCreate.jsx';
@@ -16,7 +15,7 @@ export default () => {
   return (
     <Route path="/" component={Layout}>
       { /* Home (main) route */ }
-      <IndexRoute component={Home}/>
+      <IndexRoute path="" component={Search} />
 
       { /* Routes */ }
       <Route path="/search" component={Search} />

@@ -1,4 +1,4 @@
-/* import React, { Component, PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { asyncConnect } from 'redux-async-connect';
 import { connect } from 'react-redux';
 import {browserHistory} from 'react-router';
@@ -12,22 +12,18 @@ import s from '../styles/index.scss';
 
 @asyncConnect([{
   promise: ({ store: {dispatch, getState}}) => {
-    console.log('sdkfjklsdfj')
     const promises = [];
-    console.log('nononon');
     if (query !== getState()[name].curSearch || !getState().setSearch.loaded) {
-      console.log('in here');
       promises.push(dispatch(searchSets(query || '', 0, setName, name)));
     }
     if (__SERVER__) {
-      console.log('in there');
       return Promise.all(promises);
     } else {
       Promise.all(promises);
     }
   }
 }])
-/*@connect(
+@connect(
   (state, props) => ({
     loading: state[props.name].loading,
     searchResults: state[props.name].results,
@@ -120,26 +116,6 @@ export default class SearchResults extends Component {
           }
         })()}
       </section>
-    );
-  }
-}*/
-
-
-import React, { Component } from 'react';
-import { asyncConnect } from 'redux-async-connect';
-
-@asyncConnect([{
-  promise: () => {
-    console.log('ehehehe');
-  }
-}])
-export default class SearchResults extends Component {
-  static propTypes = {
-
-  }
-  render() {
-    return (
-      <h1>Hi</h1>
     );
   }
 }
