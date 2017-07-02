@@ -3,7 +3,7 @@ header {
   position: fixed;
   width: 100%;
 	height: $headerHeight;
-	background-color: $white;
+	background-color: $primaryDark;
 	box-shadow: $largeShadow;
 	z-index: 5;
   display: flex;
@@ -12,7 +12,6 @@ header {
   padding-left: $margin;
   padding-right: $margin;
   box-sizing: border-box;
-  border-bottom: $containerBorder;
 
   nav {
     display: flex;
@@ -28,9 +27,11 @@ header {
     margin-right: 24px;
 
     a {
-      color: $black;
       text-decoration: none;
     }
+  }
+  a {
+    color: $white;
   }
   .hamburger {
     margin-right: 12px;
