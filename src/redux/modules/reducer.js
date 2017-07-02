@@ -4,15 +4,13 @@ import {reducer as reduxAsyncConnect} from 'redux-async-connect';
 import auth from './auth';
 import {reducer as form} from 'redux-form';
 import modal from './modal';
-import set from './set';
-import type from './type';
 import setDetails from './setDetails';
-import item from './item';
 import typeDetails from './typeDetails';
 import profileDetails from './profileDetails';
 import searchInput from './searchInput';
 import mainSearch from './mainSearch';
 import searchResults from './searchResults';
+import object from './object';
 
 
 const createNamedWrapperReducer = (reducerFunction, reducerName) => {
@@ -37,10 +35,8 @@ export default combineReducers({
   mainSearch,
   mainDataSetResults: createNamedWrapperReducer(searchResults, 'mainDataSetResults'),
   mainDataTypeResults: createNamedWrapperReducer(searchResults, 'mainDataTypeResults'),
-  set,
-  type,
   setDetails,
-  item,
   typeDetails,
-  profileDetails
+  profileDetails,
+  object
 });

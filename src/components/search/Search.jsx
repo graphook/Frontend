@@ -4,8 +4,10 @@ import { connect } from 'react-redux';
 import {Link} from 'react-router';
 import Helmet from 'react-helmet';
 import {changeSelectedSearch} from 'redux/modules/mainSearch';
-import SearchResults from './SearchResults';
 import {search} from 'redux/modules/searchResults';
+import DefaultSearchResults from 'components/search/DefaultSearchResults.jsx';
+import SetSearchResults from 'components/search/SetSearchResults.jsx';
+import TypeSearchResults from 'components/search/TypeSearchResults.jsx';
 
 import s from '../styles/index.scss';
 
@@ -13,11 +15,15 @@ const setNameMap = {
   'set_set': 'mainDataSetResults',
   'type_set': 'mainDataTypeResults',
   'insight_set': 'mainInsightResults'
-}
+};
+const setTypeMap = {
+  'set_set': 'set_type',
+  'type_set': 'type_type',
+  'insight_set': 'insight_type'
+};
 
 @asyncConnect([{
   promise: ({ location, store: {dispatch, getState}}) => {
-    console.log('in here')
     const promises = [];
     const setName = getState().routing.locationBeforeTransitions.pathname.split('/')[2] || 'set_set';
     const query = location.query.q || '';
@@ -27,15 +33,13 @@ const setNameMap = {
       promises.push(dispatch(search(query || '', 0, setName, name)));
     }
     if (__SERVER__) {
-      console.log('in there');
       return Promise.all(promises);
-    } else {
-      Promise.all(promises);
     }
+    Promise.all(promises);
   }
 }])
 @connect(
-  (state, props) => ({
+  (state) => ({
     setName: state.mainSearch.selectedSet,
     modalOpen: state.modal.open,
     searchText: state.mainSearchBar.searchText,
@@ -43,6 +47,7 @@ const setNameMap = {
     results: state[setNameMap[state.mainSearch.selectedSet]].results,
     allResultsLoaded: state[setNameMap[state.mainSearch.selectedSet]].allResultsLoaded,
     curSearch: state[setNameMap[state.mainSearch.selectedSet]].curSearch,
+    objects: state.object
   }))
 export default class SetSearch extends Component {
   static propTypes = {
@@ -53,14 +58,25 @@ export default class SetSearch extends Component {
     page: PropTypes.number,
     updateSearchText: PropTypes.func,
     searchResults: PropTypes.array,
-    setHash: PropTypes.object,
     location: PropTypes.object,
-    setName: PropTypes.string
+    setName: PropTypes.string,
+    results: PropTypes.array,
+    objects: PropTypes.object
   }
   render() {
     const query = this.props.location.query.q || '';
     const setName = this.props.setName;
-    const name = setNameMap[setName];
+    let ResultComponent;
+    switch (setName) {
+      case 'set_set':
+        ResultComponent = SetSearchResults;
+        break;
+      case 'type_set':
+        ResultComponent = TypeSearchResults;
+        break;
+      default:
+        ResultComponent = DefaultSearchResults;
+    }
     return (
       <div>
         {(() => {
@@ -88,6 +104,13 @@ export default class SetSearch extends Component {
               </li>
             </ul>
           </nav>
+          <ResultComponent
+            loading={this.props.loading}
+            results={this.props.results}
+            objects={this.props.objects}
+            type={setTypeMap[setName]}
+            onLoadMore={()=> console.log('loading more')}
+            curSearch={this.props.curSearch} />
         </div>
       </div>
     );

@@ -22,17 +22,17 @@ export default function reducer(state = initialState, action = {}) {
         error: undefined
       };
     case SEARCH_SUCCESS:
-      const results = action.result.sets.read.map((result) => {
-        return result._id;
-      });
+      const resultIds = Object.keys(action.result.read).reduce((aggs, typeKey) => {
+        return aggs.concat(action.result.read[typeKey].map((obj) => obj._id));
+      }, []);
       return {
         ...state,
         loading: false,
         loaded: true,
-        results: (action.page !== 0) ? state.results.concat(results) : results,
+        results: (action.page !== 0) ? state.results.concat(resultIds) : resultIds,
         page: action.page,
         curSearch: action.query,
-        allResultsLoaded: action.result.sets.read.length < NUM_PER_PAGE
+        allResultsLoaded: resultIds.length < NUM_PER_PAGE
       };
     case SEARCH_FAIL:
       return {
@@ -50,7 +50,7 @@ export default function reducer(state = initialState, action = {}) {
 export function search(searchQuery, pageNumber = 0, setName, name) {
   return {
     types: [SEARCH, SEARCH_SUCCESS, SEARCH_FAIL],
-    promise: (client) => client.post('/v2/set/' + setName + '/search', {
+    promise: (client) => client.post('/v2/set/' + setName + '/item/search', {
       params: {
         page: pageNumber,
         count: NUM_PER_PAGE
