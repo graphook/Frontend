@@ -1,83 +1,32 @@
 import React, { Component, PropTypes } from 'react';
 import { asyncConnect } from 'redux-async-connect';
 import { connect } from 'react-redux';
-import {fetchSet, fetchItems} from 'redux/modules/setDetails';
-import {fetchType} from 'redux/modules/type';
-import {star, unstar, fetchUser} from 'redux/modules/profileDetails';
-import Waypoint from 'react-waypoint';
-import NestingTable from './nestingTable/NestingTable.jsx';
-import ReactDOM from 'react-dom';
+import { fetchSet } from 'redux/modules/setDetails';
+import Helmet from 'react-helmet';
 import {Link} from 'react-router';
 import {promptSignIn} from 'redux/modules/modal';
-import Helmet from 'react-helmet';
-import {jsonToCsv} from 'utils/csvConverter';
+import {star, unstar, fetchUser} from 'redux/modules/profileDetails';
 
 import s from '../styles/index.scss';
 
 @asyncConnect([{
   promise: ({store: {dispatch, getState}, params: {id}}) => {
     const promises = [];
-    promises.push(dispatch(fetchSet(id)).then(() => {
-      const state = getState();
-      const typeId = state.set.hash[id].type._id;
-      return Promise.all([
-        dispatch(fetchItems(id, state.set.hash[id].items, 0)),
-        dispatch(fetchType(typeId))
-      ]);
-    }));
-    promises.push(dispatch(fetchUser()));
+    promises.push(dispatch(fetchSet(id)))
     return Promise.all(promises);
   }
 }])
 @connect(state => {
-  const props = {
-    setHash: state.set.hash,
-    itemHash: state.item.hash,
-    page: state.setDetails.page,
-    numPerPage: state.setDetails.numPerPage,
-    id: state.setDetails.id,
-    items: state.setDetails.items,
-    allItemsLoaded: state.setDetails.allItemsLoaded,
-    itemError: state.setDetails.itemError,
-    isStarred: (state.profileDetails.user.stars) ? state.profileDetails.user.stars.indexOf(state.setDetails.id) !== -1 : false,
-    isLoggedIn: !!(state.auth.user)
-  };
-  if (state.setDetails.id && state.set.hash[state.setDetails.id]) {
-    const set = state.set.hash[state.setDetails.id];
-    Object.assign(props, {
-      set: set,
-      type: state.type.hash[set.type._id]
-    });
+  const props = {};
+  if (state.setDetails.id && state.object.set_type && state.object.set_type[state.setDetails.id]) {
+    props.set = state.object.set_type[state.setDetails.id]
   }
   return props;
-}, {fetchSet, fetchItems, fetchType, star, unstar, promptSignIn})
+}, {star, unstar, promptSignIn})
 export default class Set extends Component {
   static propTypes = {
-    params: PropTypes.shape({
-      id: PropTypes.string
-    }),
-    location: PropTypes.shape({
-      query: PropTypes.object,
-      pathname: PropTypes.string
-    }),
-    fetchSet: PropTypes.func,
-    fetchItems: PropTypes.func,
-    fetchType: PropTypes.func,
-    setHash: PropTypes.object,
-    itemHash: PropTypes.object,
-    page: PropTypes.number,
-    numPerPage: PropTypes.number,
     set: PropTypes.object,
-    type: PropTypes.object,
-    allItemsLoaded: PropTypes.bool,
-    itemError: PropTypes.object,
-    id: PropTypes.string,
-    isStarred: PropTypes.bool,
-    star: PropTypes.func,
-    unstar: PropTypes.func,
-    isLoggedIn: PropTypes.bool,
-    promptSignIn: PropTypes.func,
-    items: PropTypes.array
+    location: PropTypes.object
   };
   constructor(props) {
     super(props);
@@ -89,11 +38,6 @@ export default class Set extends Component {
   componentDidMount() {
     this.node = ReactDOM.findDOMNode(this);
   }
-  loadMore = () => {
-    if (!this.props.allItemsLoaded) {
-      this.props.fetchItems(this.props.params.id, this.props.set.items, this.props.page + 1);
-    }
-  }
   handleScroll = () => {
     if (this.state.horizontalScrollOffset !== this.node.scrollLeft) {
       this.setState({horizontalScrollOffset: this.node.scrollLeft});
@@ -101,12 +45,6 @@ export default class Set extends Component {
   }
   render() {
     if (this.props.set) {
-      const data = [];
-      for (let i = 0; i < (this.props.numPerPage * (this.props.page + 1)); i++) {
-        if (this.props.itemHash[this.props.items[i]]) {
-          data.push(this.props.itemHash[this.props.items[i]]);
-        }
-      }
       return (
         <div className={s.set} onScroll={this.handleScroll}>
           <Helmet title={this.props.set.title} />
@@ -170,93 +108,9 @@ export default class Set extends Component {
               </ul>
             </nav>
           </div>
-          <Waypoint
-            onEnter={() => this.setState({focusTable: false})}
-            onLeave={() => this.setState({focusTable: true})} />
-          {(() => {
-            if (this.props.location.query.view === 'json') {
-              const formattedData = JSON.stringify(data, null, 2);
-              return (
-                <div className={s.jsonArea}>
-                  {(() => {
-                    if (this.props.isLoggedIn) {
-                      return (
-                        <a
-                            href={'data:text/plain;charset=utf-8,' + encodeURIComponent(formattedData)}
-                            download={this.props.set.title + '.json'}>
-                          <i className="fa fa-download"></i>download
-                        </a>
-                      );
-                    }
-                    return (
-                      <a onClick={this.props.promptSignIn}>
-                        <i className="fa fa-download"></i>download
-                      </a>
-                    );
-                  })()}
-                  <pre>
-                    {formattedData}
-                  </pre>
-                </div>
-              );
-            } else if (this.props.location.query.view === 'csv') {
-              const formattedData = jsonToCsv(data.map((item) => {
-                const newItem = { ...item };
-                delete newItem._sets;
-                delete newItem._type;
-                return newItem;
-              }));
-              return (
-                <div className={s.jsonArea}>
-                  {(() => {
-                    if (this.props.isLoggedIn) {
-                      return (
-                        <a
-                            href={'data:text/plain;charset=utf-8,' + encodeURIComponent(formattedData)}
-                            download={this.props.set.title + '.csv'}>
-                            <i className="fa fa-download"></i>download
-                        </a>
-                      );
-                    }
-                    return (
-                      <a onClick={this.props.promptSignIn}>
-                        <i className="fa fa-download"></i>download
-                      </a>
-                    );
-                  })()}
-                  <pre>
-                    {formattedData}
-                  </pre>
-                </div>
-              );
-            }
-            return (
-              <NestingTable
-                type={this.props.type}
-                data={data}
-                focused={this.state.focusTable}
-                horizontalScrollOffset={this.state.horizontalScrollOffset} />
-            );
-          })()}
-          <Waypoint onEnter={this.loadMore} />
-          {(() => {
-            if (this.props.allItemsLoaded) {
-              return (
-                <div className={s.centeredMessage}>
-                  <i className="fa fa-check"></i> no more items
-                </div>
-              );
-            } else if (this.props.itemError.item) {
-              return (
-                <div className={s.centeredMessage + ' ' + s.error}>
-                  <i className="fa fa-times"></i> {this.props.itemError.item}
-                </div>
-              );
-            }
-          })()}
         </div>
-      );
+      )
     }
-    return (<div className={s.centeredMessage}>there was a problem loading this page. try refreshing.</div>);
+    return (<div className={s.centeredMessage}>There was a problem loading this page. Try refreshing.</div>);
   }
 }
