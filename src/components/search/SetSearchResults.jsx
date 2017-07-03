@@ -46,7 +46,7 @@ export default class SetSearchResults extends Component {
             return (
               <div className={s.centeredMessage}>
                 <i className="fa fa-frown-o" aria-hidden="true">
-                </i> no results for {this.props.curSearch}.
+                </i> No results for {this.props.curSearch}.
               </div>
             );
           }

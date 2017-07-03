@@ -2,7 +2,6 @@
   height: calc(100vh - 50px);
   width: 100vw;
   overflow: auto;
-  background-color: $white;
 
   .infoArea {
     width: 100vw;
@@ -47,7 +46,24 @@
       padding-right: $margin;
       display: flex;
       justify-content: space-between;
-      border-top: 1px solid $subtleGrey;
+      border-bottom: $containerBorder;
+      background-color: $white;
+      align-items: center;
+
+      .searchBox {
+        margin-left: 16px;
+      }
+
+      @media (max-width: 600px) {
+        flex-direction: column-reverse;
+
+        .searchBox {
+          margin-top: 16px;
+          max-width: none;
+          width: 100%;
+          margin-left: 0;
+        }
+      }
     }
   }
 

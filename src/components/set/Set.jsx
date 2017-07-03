@@ -2,27 +2,68 @@ import React, { Component, PropTypes } from 'react';
 import { asyncConnect } from 'redux-async-connect';
 import { connect } from 'react-redux';
 import { fetchSet } from 'redux/modules/setDetails';
+import { fetch } from 'redux/modules/object';
 import Helmet from 'react-helmet';
 import {Link} from 'react-router';
 import {promptSignIn} from 'redux/modules/modal';
 import {star, unstar, fetchUser} from 'redux/modules/profileDetails';
+import ReactDOM from 'react-dom';
+import NestingTable from './nestingTable/NestingTable.jsx';
+import {updateSearchText} from 'redux/modules/searchInput';
+import {search} from 'redux/modules/searchResults';
+import Waypoint from 'react-waypoint';
+import {browserHistory} from 'react-router';
 
 import s from '../styles/index.scss';
 
 @asyncConnect([{
-  promise: ({store: {dispatch, getState}, params: {id}}) => {
+  promise: ({location, params, store: {dispatch, getState}, params: {id}}) => {
+    const query = location.query.sq;
+    const setName = params.id;
+    const oldSetName = getState().setDetails.id;
     const promises = [];
-    promises.push(dispatch(fetchSet(id)))
+    promises.push(dispatch(fetchSet(id)).then(() => {
+      const state = getState();
+      const set = state.object.set_type[state.setDetails.id];
+      const nestedPromises = [];
+      if (!(state.object.type_type && state.object.type_type[set.type._id])) {
+        nestedPromises.push(dispatch(fetch(set.type._id)))
+      }
+      if (query !== state.setResults.curSearch || !state.setResults.loaded) {
+        nestedPromises.push(dispatch(search(query || '', 0, setName, 'setResults', oldSetName !== set._id)));
+      }
+      if (__SERVER__) {
+        return Promise.all(nestedPromises);
+      }
+      Promise.all(nestedPromises);
+    }));
+    promises.push(dispatch(fetchUser()));
+    promises.push(dispatch(updateSearchText(query || '', 'setSearchBar')));
     return Promise.all(promises);
   }
 }])
-@connect(state => {
-  const props = {};
-  if (state.setDetails.id && state.object.set_type && state.object.set_type[state.setDetails.id]) {
+@connect((state) => {
+  const props = {
+    isStarred: (state.profileDetails.user.stars) ? state.profileDetails.user.stars.indexOf(state.setDetails.id) !== -1 : false,
+    isLoggedIn: !!(state.auth.user),
+    results: [],
+    loadingResults: state.setResults.loading,
+    curSearch: state.setResults.curSearch,
+    searchText: state.setSearchBar.searchText
+  };
+  if (state.setDetails.id &&
+      state.object.set_type &&
+      state.object.set_type[state.setDetails.id]) {
     props.set = state.object.set_type[state.setDetails.id]
+    props.results = state.setResults.results.map((result) => {
+      return state.object[props.set.type._id][result]
+    });
+    if (state.object.type_type && state.object.type_type[props.set.type._id]) {
+      props.type = state.object.type_type[props.set.type._id];
+    }
   }
   return props;
-}, {star, unstar, promptSignIn})
+}, {star, unstar, promptSignIn, updateSearchText})
 export default class Set extends Component {
   static propTypes = {
     set: PropTypes.object,
@@ -62,7 +103,7 @@ export default class Set extends Component {
                   <i className="fa fa-file-text"></i>{this.props.set.type.title}
                 </Link>
                 <span>
-                  <i className="fa fa-file"></i> {this.props.set.numItems}
+                  <i className="fa fa-file"></i> {this.props.set.numberOfItems}
                 </span>
                 {!this.props.isStarred && (
                   <button onClick={() => (this.props.isLoggedIn) ? this.props.star(this.props.set._id) : this.props.promptSignIn() }>
@@ -106,8 +147,31 @@ export default class Set extends Component {
                   </Link>
                 </li>
               </ul>
+              <form className={s.searchBox} onSubmit={(e) => {
+                e.preventDefault();
+                browserHistory.push('/set/' + this.props.set._id + '?sq=' + this.props.searchText);
+              }}>
+                <input
+                    type="text"
+                    placeholder="Search Objects in this Set"
+                    ref="searchBox"
+                    value={this.props.searchText}
+                    onChange={(e) => this.props.updateSearchText(e.target.value, 'setSearchBar')} />
+                <button className={s.primary}><i className="fa fa-search"></i></button>
+              </form>
             </nav>
           </div>
+          <Waypoint
+            onEnter={() => this.setState({focusTable: false})}
+            onLeave={() => this.setState({focusTable: true})} />
+          <pre>
+            {JSON.stringify(this.props.results, null, 2)}
+          </pre>
+          {/*<NestingTable
+            type={this.props.type}
+            data={data}
+            focused={this.state.focusTable}
+            horizontalScrollOffset={this.state.horizontalScrollOffset} /> */}
         </div>
       )
     }

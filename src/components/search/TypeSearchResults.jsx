@@ -4,7 +4,7 @@ import Waypoint from 'react-waypoint';
 
 import s from '../styles/index.scss';
 
-export default class SetSearchResults extends Component {
+export default class TypeSearchResults extends Component {
   static propTypes = {
     loading: PropTypes.bool,
     results: PropTypes.array,
@@ -38,7 +38,7 @@ export default class SetSearchResults extends Component {
             return (
               <div className={s.centeredMessage}>
                 <i className="fa fa-frown-o" aria-hidden="true">
-                </i> no results for {this.props.curSearch}.
+                </i> No results for {this.props.curSearch}.
               </div>
             );
           }

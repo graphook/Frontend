@@ -1,3 +1,6 @@
+const FETCH = 'object/FETCH';
+const FETCH_SUCCESS = 'object/FETCH_SUCCESS';
+const FETCH_FAIL = 'object/FETCH_FAIL';
 
 const initialState = {};
 
@@ -18,4 +21,11 @@ export default function reducer(state = initialState, action = {}) {
     });
   }
   return state;
+}
+
+export function fetch(id) {
+  return {
+    types: [FETCH, FETCH_SUCCESS, FETCH_FAIL],
+    promise: (client) => client.get('/v2/object/' + id)
+  }
 }

@@ -11,6 +11,8 @@ const UNSTAR = 'profileDetails/UNSTAR';
 const UNSTAR_SUCCESS = 'profileDetails/UNSTAR_SUCCESS';
 const UNSTAR_FAIL = 'profileDetails/UNSTAR_FAIL';
 
+import clone from 'utils/clone';
+
 const initialState = {
   loading: false,
   loadingUserSets: false,
@@ -29,6 +31,7 @@ export default function reducer(state = initialState, action = {}) {
       user: action.result.auth.user
     };
   }
+  let newState;
   switch (action.type) {
     case FETCH:
       return {
@@ -68,9 +71,13 @@ export default function reducer(state = initialState, action = {}) {
         userSetsError: action.error
       };
     case STAR_SUCCESS:
-      return state;
+      newState = clone(state);
+      newState.user.stars.push(action.id);
+      return newState;
     case UNSTAR_SUCCESS:
-      return state;
+      newState = clone(state);
+      newState.user.stars.splice(newState.user.stars.indexOf(action.id), 1);
+      return newState;
     case 'auth/LOGOUT_SUCCESS':
       return {
         ...state,
@@ -105,14 +112,14 @@ export function fetchUserSets(username) {
 export function star(setId) {
   return {
     types: [STAR, STAR_SUCCESS, STAR_FAIL],
-    promise: (client) => client.put('/v1/set/' + setId + '/star'),
+    promise: (client) => client.put('/v2/set/' + setId + '/star'),
     id: setId
   };
 }
 export function unstar(setId) {
   return {
     types: [UNSTAR, UNSTAR_SUCCESS, UNSTAR_FAIL],
-    promise: (client) => client.put('/v1/set/' + setId + '/unstar'),
+    promise: (client) => client.put('/v2/set/' + setId + '/unstar'),
     id: setId
   };
 }

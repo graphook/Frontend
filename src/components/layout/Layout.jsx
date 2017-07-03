@@ -104,7 +104,7 @@ export default class Layout extends Component {
               <i className={'fa fa-bars ' + s.hamburger}></i>
             </a>
             <h1><Link to="/">zenow</Link></h1>
-            <form className={s.search} onSubmit={(e) => {
+            <form className={s.searchBox} onSubmit={(e) => {
               e.preventDefault();
               browserHistory.push('/search/' + this.props.setName + '?q=' + this.props.searchText);
             }}>
