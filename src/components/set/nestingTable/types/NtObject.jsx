@@ -17,7 +17,7 @@ class NtObject extends Component {
           const ChildComponent = types[this.props.type.fields[propKey].type];
           const tempPath = this.props.path.slice(0);
           tempPath.push(propKey);
-          if (this.props.data) {
+          if (this.props.data[propKey] != null) {
             return (
               <ChildComponent
                   key={tempPath.join()}
@@ -27,7 +27,7 @@ class NtObject extends Component {
               );
           }
           return (
-            <NtNull />
+            <NtNull key={tempPath.join()} />
           );
         })}
       </div>

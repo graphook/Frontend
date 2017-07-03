@@ -27,5 +27,5 @@ export function fetch(id) {
   return {
     types: [FETCH, FETCH_SUCCESS, FETCH_FAIL],
     promise: (client) => client.get('/v2/object/' + id)
-  }
+  };
 }

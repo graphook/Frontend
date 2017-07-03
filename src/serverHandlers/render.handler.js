@@ -45,7 +45,7 @@ export default function(req, res) {
       ReactDOM.renderToString(<Html assets={webpackIsomorphicTools.assets()} store={store}/>));
   }
 
-  if (!__DISABLE_SSR__) {
+  if (__DISABLE_SSR__) {
     hydrateOnClient();
     return;
   }

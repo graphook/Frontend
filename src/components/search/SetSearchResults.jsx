@@ -11,7 +11,7 @@ export default class SetSearchResults extends Component {
     objects: PropTypes.object,
     type: PropTypes.string,
     onLoadMore: PropTypes.func,
-    curSearch: PropTypes.func
+    curSearch: PropTypes.string
   }
   render() {
     return (

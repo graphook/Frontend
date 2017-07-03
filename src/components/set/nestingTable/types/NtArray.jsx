@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import types from './type.map.js';
+import NtNull from './NtNull';
 
 import s from 'components/styles/index.scss';
 
@@ -10,10 +11,10 @@ class NtArray extends Component {
     path: PropTypes.array
   }
   render() {
-    const ChildComponent = types[this.props.type.items.type];
+    const ChildComponent = types[this.props.type.items.type] || NtNull;
     return (
       <div className={s.ntArrayContainer}>
-        {this.props.data && this.props.data.map((elem, index) => {
+        {this.props.data != null && this.props.data.map((elem, index) => {
           const tempPath = this.props.path.slice(0);
           tempPath.push(index);
           return (

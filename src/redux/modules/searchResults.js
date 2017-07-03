@@ -15,7 +15,6 @@ const initialState = {
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
     case SEARCH:
-      console.log('at least here')
       return {
         ...state,
         results: (action.query !== state.curSearch || action.clearSearch) ? [] : state.results,
@@ -23,11 +22,9 @@ export default function reducer(state = initialState, action = {}) {
         error: undefined
       };
     case SEARCH_SUCCESS:
-      console.log('maybe here')
       const resultIds = Object.keys(action.result.read).reduce((aggs, typeKey) => {
         return aggs.concat(action.result.read[typeKey].map((obj) => obj._id));
       }, []);
-      console.log('getting here')
       return {
         ...state,
         loading: false,
@@ -38,7 +35,6 @@ export default function reducer(state = initialState, action = {}) {
         allResultsLoaded: resultIds.length < NUM_PER_PAGE
       };
     case SEARCH_FAIL:
-      console.log('or here')
       return {
         ...state,
         loading: false,
@@ -52,7 +48,6 @@ export default function reducer(state = initialState, action = {}) {
 }
 
 export function search(searchQuery, pageNumber = 0, setName, name, clearSearch = false) {
-  console.log('even here?')
   return {
     types: [SEARCH, SEARCH_SUCCESS, SEARCH_FAIL],
     promise: (client) => client.post('/v2/set/' + setName + '/item/search', {

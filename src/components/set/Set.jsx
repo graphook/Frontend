@@ -9,6 +9,8 @@ import {promptSignIn} from 'redux/modules/modal';
 import {star, unstar, fetchUser} from 'redux/modules/profileDetails';
 import ReactDOM from 'react-dom';
 import NestingTable from './nestingTable/NestingTable.jsx';
+import JSONDisplay from './JSONDisplay.jsx';
+import CSVDisplay from './CSVDisplay.jsx';
 import {updateSearchText} from 'redux/modules/searchInput';
 import {search} from 'redux/modules/searchResults';
 import Waypoint from 'react-waypoint';
@@ -27,7 +29,7 @@ import s from '../styles/index.scss';
       const set = state.object.set_type[state.setDetails.id];
       const nestedPromises = [];
       if (!(state.object.type_type && state.object.type_type[set.type._id])) {
-        nestedPromises.push(dispatch(fetch(set.type._id)))
+        nestedPromises.push(dispatch(fetch(set.type._id)));
       }
       if (query !== state.setResults.curSearch || !state.setResults.loaded) {
         nestedPromises.push(dispatch(search(query || '', 0, setName, 'setResults', oldSetName !== set._id)));
@@ -54,9 +56,9 @@ import s from '../styles/index.scss';
   if (state.setDetails.id &&
       state.object.set_type &&
       state.object.set_type[state.setDetails.id]) {
-    props.set = state.object.set_type[state.setDetails.id]
+    props.set = state.object.set_type[state.setDetails.id];
     props.results = state.setResults.results.map((result) => {
-      return state.object[props.set.type._id][result]
+      return state.object[props.set.type._id][result];
     });
     if (state.object.type_type && state.object.type_type[props.set.type._id]) {
       props.type = state.object.type_type[props.set.type._id];
@@ -83,6 +85,9 @@ export default class Set extends Component {
     if (this.state.horizontalScrollOffset !== this.node.scrollLeft) {
       this.setState({horizontalScrollOffset: this.node.scrollLeft});
     }
+  }
+  loadMore = () => {
+    console.log('loading More');
   }
   render() {
     if (this.props.set) {
@@ -149,7 +154,10 @@ export default class Set extends Component {
               </ul>
               <form className={s.searchBox} onSubmit={(e) => {
                 e.preventDefault();
-                browserHistory.push('/set/' + this.props.set._id + '?sq=' + this.props.searchText);
+                browserHistory.push({
+                  pathname: this.props.location.pathname,
+                  query: {...this.props.location.query, sq: this.props.searchText}
+                });
               }}>
                 <input
                     type="text"
@@ -164,16 +172,39 @@ export default class Set extends Component {
           <Waypoint
             onEnter={() => this.setState({focusTable: false})}
             onLeave={() => this.setState({focusTable: true})} />
-          <pre>
-            {JSON.stringify(this.props.results, null, 2)}
-          </pre>
-          {/*<NestingTable
-            type={this.props.type}
-            data={data}
-            focused={this.state.focusTable}
-            horizontalScrollOffset={this.state.horizontalScrollOffset} /> */}
+          {(() => {
+            switch (this.props.location.query.view) {
+              case 'json':
+                return (
+                  <JSONDisplay
+                    type={this.props.type}
+                    data={this.props.results}
+                    onLoadMore={this.loadMore}
+                    set={this.props.set}
+                    isLoggedIn={this.props.isLoggedIn} />
+                );
+              case 'csv':
+                return (
+                  <CSVDisplay
+                    type={this.props.type}
+                    data={this.props.results}
+                    onLoadMore={this.loadMore}
+                    set={this.props.set}
+                    isLoggedIn={this.props.isLoggedIn} />
+                );
+              default:
+                return (
+                  <NestingTable
+                    type={this.props.type}
+                    data={this.props.results}
+                    focused={this.state.focusTable}
+                    horizontalScrollOffset={this.state.horizontalScrollOffset}
+                    onLoadMore={this.loadMore} />
+                );
+            }
+          })()}
         </div>
-      )
+      );
     }
     return (<div className={s.centeredMessage}>There was a problem loading this page. Try refreshing.</div>);
   }

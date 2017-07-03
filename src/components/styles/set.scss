@@ -8,6 +8,8 @@
     padding-top: 16px;
     box-sizing: border-box;
     overflow-x: auto;
+    background-color: $white;
+    overflow: hidden;
 
     .setInfo {
       display: flex;
@@ -47,7 +49,7 @@
       display: flex;
       justify-content: space-between;
       border-bottom: $containerBorder;
-      background-color: $white;
+      border-top: $containerBorder;
       align-items: center;
 
       .searchBox {
@@ -79,7 +81,7 @@
     }
     .ntHeadArea {
       position: relative;
-      background-color: $black;
+      background-color: $primaryDark;
       display: flex;
       color: $white;
       justify-content: flex-start;
@@ -107,7 +109,7 @@
         display: flex;
       }
       > .itemContainer {
-        background-color: $black;
+        background-color: $primaryDark;
 
         > .item {
           padding-top: 4px;
@@ -128,8 +130,9 @@
       width: 100%;
       box-sizing: border-box;
       flex-shrink: 0;
+      border-bottom: 1px solid black;
 
-      > .ntObject {
+      /*> .ntObject {
         border-right: 1px solid $lightGrey;
         padding-right: 0;
 
@@ -137,12 +140,20 @@
           border-bottom: 1px solid $black;
           padding-bottom: 1px;
         }
+      }*/
+
+      > .ntObject, > .ntItem, > .ntArrayContainer {
+        border-bottom: 1px solid $black;
+        padding-bottom: 1px;
+        margin-bottom: -1px;
+      }
+      > .ntObject:last-of-type, > .ntItem:last-of-type, > .ntArrayContainer:last-of-type {
+        border-right: 1px solid $lightGrey;
       }
 
       .ntObject {
         display: flex;
         flex-direction: row;
-        margin-top: -1px;
       }
 
       .ntItem {
@@ -158,14 +169,15 @@
         display: flex;
         flex-direction: column;
 
-        > .ntItem:last-child .ntLeaf {
-          border-bottom: 1px solid $black !important;
-          padding-bottom: 1px;
+        > .ntItem, > .ntObject, > .ntArrayContainer {
+          border-bottom: 1px solid $lightGrey;
+        }
+        > .ntItem:last-of-type, > .ntObject:last-of-type, > .ntArrayContainer:last-of-type {
+          border-bottom: none;
         }
       }
       .ntLeaf {
         width: 200px;
-        border-bottom: 1px solid $lightGrey;
         border-left: 1px solid $lightGrey;
         padding: 4px;
         input[type=text] {

@@ -49,7 +49,7 @@ const setTypeMap = {
     curSearch: state[setNameMap[state.mainSearch.selectedSet]].curSearch,
     objects: state.object
   }))
-export default class SetSearch extends Component {
+export default class Search extends Component {
   static propTypes = {
     searchText: PropTypes.string,
     loading: PropTypes.bool,

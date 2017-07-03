@@ -132,6 +132,7 @@ header {
   bottom: 0;
   transition: transform 0.25s ease;
   box-sizing: border-box;
+  z-index: 5;
 
   ul {
     list-style: none;
