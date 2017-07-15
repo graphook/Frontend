@@ -2,6 +2,8 @@ const FETCH = 'object/FETCH';
 const FETCH_SUCCESS = 'object/FETCH_SUCCESS';
 const FETCH_FAIL = 'object/FETCH_FAIL';
 
+import clone from 'utils/clone';
+
 const initialState = {};
 
 export default function reducer(state = initialState, action = {}) {
@@ -9,16 +11,20 @@ export default function reducer(state = initialState, action = {}) {
     const methods = ([action.result.read || {}]);
     methods.push(action.result.created || {});
     methods.push(action.result.updated || {});
-    methods.forEach((method) => {
-      Object.keys(method).forEach((typeKey) => {
-        if (!state[typeKey]) {
-          state[typeKey] = {};
-        }
-        method[typeKey].forEach((obj) => {
-          state[typeKey][obj._id] = obj;
+    if (methods.length > 0) {
+      const newState = clone(state);
+      methods.forEach((method) => {
+        Object.keys(method).forEach((typeKey) => {
+          if (!newState[typeKey]) {
+            newState[typeKey] = {};
+          }
+          method[typeKey].forEach((obj) => {
+            newState[typeKey][obj._id] = obj;
+          });
         });
       });
-    });
+      return newState;
+    }
   }
   return state;
 }

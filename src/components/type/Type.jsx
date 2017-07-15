@@ -17,13 +17,16 @@ import s from '../styles/index.scss';
   }
 }])
 @connect(state => {
-  return {
+  const map = {
     id: state.typeDetails.id,
-    type: state.type.hash[state.typeDetails.id],
     error: state.typeDetails.error
   };
+  if (map.id && state.object.type_type) {
+    map.type = state.object.type_type[map.id];
+  }
+  return map;
 }, {fetchType})
-export default class Set extends Component {
+export default class Type extends Component {
   static propTypes = {
     params: PropTypes.shape({
       id: PropTypes.string
@@ -44,64 +47,67 @@ export default class Set extends Component {
   }
 
   render() {
-    return (
-      <div className={s.type}>
-        <Helmet title={this.props.type.title} />
-        <div className={s.infoArea} style={{marginLeft: this.state.horizontalScrollOffset}}>
-          <div className={s.typeInfo}>
-            <div>
-              <h1>{this.props.type.title} ({this.props.type._id})</h1>
-              <p>{this.props.type.description}</p>
+    if (this.props.type) {
+      return (
+        <div className={s.type}>
+          <Helmet title={this.props.type.title} />
+          <div className={s.infoArea} style={{marginLeft: this.state.horizontalScrollOffset}}>
+            <div className={s.typeInfo}>
+              <div>
+                <h1>{this.props.type.title} ({this.props.type._id})</h1>
+                <p>{this.props.type.description}</p>
+              </div>
+              <nav>
+                <span>
+                  <i className="fa fa-table"></i> {this.props.type.numUses}
+                </span>
+              </nav>
             </div>
-            <nav>
-              <span>
-                <i className="fa fa-table"></i> {this.props.type.numUses}
-              </span>
-            </nav>
-          </div>
-          <nav className={s.dataNav}>
-            {(() => {
-              if (this.props.location.query.view === 'json') {
+            <nav className={s.dataNav}>
+              {(() => {
+                if (this.props.location.query.view === 'json') {
+                  return (
+                    <Link
+                        to={{
+                          pathname: this.props.location.pathname,
+                          query: {...this.props.location.query, view: 'list'}
+                        }}>
+                      <i className="fa fa-list-ul"></i>list view
+                    </Link>
+                  );
+                }
                 return (
                   <Link
                       to={{
                         pathname: this.props.location.pathname,
-                        query: {...this.props.location.query, view: 'list'}
+                        query: {...this.props.location.query, view: 'json'}
                       }}>
-                    <i className="fa fa-list-ul"></i>list view
+                    <i className="fa fa-align-right"></i>json view
                   </Link>
                 );
-              }
+              })()}
+              <Link to="/documentation/Type">
+                <i className="fa fa-book"></i>rest api
+              </Link>
+            </nav>
+          </div>
+          {(() => {
+            if (this.props.location.query.view === 'json') {
               return (
-                <Link
-                    to={{
-                      pathname: this.props.location.pathname,
-                      query: {...this.props.location.query, view: 'json'}
-                    }}>
-                  <i className="fa fa-align-right"></i>json view
-                </Link>
+                <pre className={s.jsonArea}>
+                  {JSON.stringify(this.props.type.properties, null, 2)}
+                </pre>
               );
-            })()}
-            <Link to="/documentation/Type">
-              <i className="fa fa-book"></i>rest api
-            </Link>
-          </nav>
-        </div>
-        {(() => {
-          if (this.props.location.query.view === 'json') {
+            }
             return (
-              <pre className={s.jsonArea}>
-                {JSON.stringify(this.props.type.properties, null, 2)}
-              </pre>
+              <div className={s.typeVisArea}>
+                <TypeVisualizer type={this.props.type} />
+              </div>
             );
-          }
-          return (
-            <div className={s.jsonArea}>
-              <TypeVisualizer type={this.props.type.properties} />
-            </div>
-          );
-        })()}
-      </div>
-    );
+          })()}
+        </div>
+      );
+    }
+    return (<div className={s.centeredMessage}>There was a problem loading this page. Try refreshing.</div>);
   }
 }

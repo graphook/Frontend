@@ -53,6 +53,11 @@ export default class Layout extends Component {
   getLinkData = () => {
     let linkData = [
       {
+        text: 'Feedback / Contact',
+        icon: 'fa-comment',
+        to: '/contact'
+      },
+      {
         text: 'Rest API',
         icon: 'fa-book',
         to: '/documentation'
@@ -148,9 +153,6 @@ export default class Layout extends Component {
             }
           })()}
           <main>{this.props.children}</main>
-          <div className={s.feedbackButton}>
-            <button className={s.primary} onClick={() => browserHistory.push('/contact')}>Contact / Feedback</button>
-          </div>
         </div>
         <nav className={s.sideMenu} style={{
           transform: 'translateX(' + ((this.state.sidePanelOpen) ? '0' : '-300px') + ')'

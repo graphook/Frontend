@@ -21,7 +21,7 @@ export default class TypeSearchResults extends Component {
           return (
             <div className={s.setResult + ' ' + s.clickableShadow}
                 key={result}
-                onClick={() => browserHistory.push('/set/' + result)}>
+                onClick={() => browserHistory.push('/type/' + result)}>
               <h2>{resultData.title}</h2>
               <p className={s.description}>
                 {resultData.description}

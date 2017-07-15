@@ -36,7 +36,7 @@ export default function reducer(state = initialState, action = {}) {
 export function fetchType(typeId) {
   return {
     types: [FETCH, FETCH_SUCCESS, FETCH_FAIL],
-    promise: (client) => client.get('/v1/type/' + typeId),
+    promise: (client) => client.get('/v2/type/' + typeId),
     id: typeId
   };
 }
