@@ -32,7 +32,7 @@ export default class TypeVisualizer extends Component {
       <tr key={pathName}>
         <td className={s.keyCell}>
           <div className={s.keyCellContainer}>
-            {new Array(path.length - 1).fill(<div className={s.spacer} />)}
+            {new Array(path.length - 1).fill('').map((val, index) => <div key={index} className={s.spacer} /> )}
             <div className={s.finalSpacer + ' ' + s.dropMenu} onClick={() => {
               this.state.isClosed[pathName] = !this.state.isClosed[pathName];
               this.setState(this.state);
@@ -51,7 +51,30 @@ export default class TypeVisualizer extends Component {
             {(() => {
               const properties = [];
               if (type.constant) {
-                properties.push(<li>Must be the value: <pre>{JSON.stringify(type.constant, null, 2)}</pre></li>);
+                properties.push(<li key="constant">Must be the value: <pre>{JSON.stringify(type.constant, null, 2)}</pre></li>);
+              }
+              if (type.allowOtherFields) {
+                properties.push(<li key="allowOther">Allows fields other than the ones listed here.</li>);
+              }
+              if (type.requiresAtLeast) {
+                properties.push(
+                  <li key="allowOther">
+                    Must have at least {type.requiresAtLeast.count} of the following fields:
+                    <ul>
+                      {type.requiresAtLeast.fields.map((field) => (<li key={field}>{field}</li>))}
+                    </ul>
+                  </li>
+                );
+              }
+              if (type.cannotHave) {
+                properties.push(
+                  <li>
+                    Cannot have any of the following fields:
+                    <ul>
+                      {type.cannotHave.map((field) => (<li key={field}>{field}</li>))}
+                    </ul>
+                  </li>
+                );
               }
               return properties;
             })()}
@@ -72,7 +95,7 @@ export default class TypeVisualizer extends Component {
       <tr key={pathName}>
         <td className={s.keyCell}>
           <div className={s.keyCellContainer}>
-            {new Array(path.length - 1).fill(<div className={s.spacer} />)}
+            {new Array(path.length - 1).fill('').map((val, index) => <div key={index} className={s.spacer} /> )}
             <div className={s.finalSpacer + ' ' + s.dropMenu} onClick={() => {
               this.state.isClosed[pathName] = !this.state.isClosed[pathName];
               this.setState(this.state);
@@ -91,30 +114,7 @@ export default class TypeVisualizer extends Component {
             {(() => {
               const properties = [];
               if (type.constant) {
-                properties.push(<li>Must be the value: <pre>{JSON.stringify(type.constant, null, 2)}</pre></li>);
-              }
-              if (type.allowOtherFields) {
-                properties.push(<li>Allows fields other than the ones listed here.</li>);
-              }
-              if (type.requiresAtLeast) {
-                properties.push(
-                  <li>
-                    Must have at least {type.requiresAtLeast.count} of the following fields:
-                    <ul>
-                      {type.requiresAtLeast.fields.map((field) => (<li>{field}</li>))}
-                    </ul>
-                  </li>
-                );
-              }
-              if (type.cannotHave) {
-                properties.push(
-                  <li>
-                    Cannot have any of the following fields:
-                    <ul>
-                      {type.cannotHave.map((field) => (<li>{field}</li>))}
-                    </ul>
-                  </li>
-                );
+                properties.push(<li key="constant">Must be the value: <pre>{JSON.stringify(type.constant, null, 2)}</pre></li>);
               }
               return properties;
             })()}
@@ -132,7 +132,7 @@ export default class TypeVisualizer extends Component {
       <tr key={path.join('.')}>
         <td className={s.keyCell}>
           <div className={s.keyCellContainer}>
-            {new Array(path.length - 1).fill(<div className={s.spacer} />)}
+            {new Array(path.length - 1).fill('').map((val, index) => <div key={index} className={s.spacer} /> )}
             <div className={s.finalSpacer} />
             <div className={s.keyText}>{path[path.length - 1]}</div>
           </div>
@@ -146,17 +146,17 @@ export default class TypeVisualizer extends Component {
             {(() => {
               const properties = [];
               if (type.constant) {
-                properties.push(<li>Must be the value: <pre>{JSON.stringify(type.constant, null, 2)}</pre></li>);
+                properties.push(<li key="constant">Must be the value: <pre>{JSON.stringify(type.constant, null, 2)}</pre></li>);
               }
               if (type.regex) {
-                properties.push(<li>Must follow the regex: {type.regex}</li>);
+                properties.push(<li key="regex">Must follow the regex: {type.regex}</li>);
               }
               if (type.enums) {
                 properties.push(
-                  <li>
+                  <li key="enums">
                     Must be one of the following values:
                     <ul>
-                      {type.enums.map((value) => (<li><pre>{JSON.stringify(value, null, 2)}</pre></li>))}
+                      {type.enums.map((value) => (<li key={value}><pre>{JSON.stringify(value, null, 2)}</pre></li>))}
                     </ul>
                   </li>
                 );
@@ -173,7 +173,7 @@ export default class TypeVisualizer extends Component {
       <tr key={path.join('.')}>
         <td className={s.keyCell}>
           <div className={s.keyCellContainer}>
-            {new Array(path.length - 1).fill(<div className={s.spacer} />)}
+            {new Array(path.length - 1).fill('').map((val, index) => <div key={index} className={s.spacer} /> )}
             <div className={s.finalSpacer} />
             <div className={s.keyText}>{path[path.length - 1]}</div>
           </div>
@@ -187,7 +187,7 @@ export default class TypeVisualizer extends Component {
             {(() => {
               const properties = [];
               if (type.constant) {
-                properties.push(<li>Must be the value: <pre>{JSON.stringify(type.constant, null, 2)}</pre></li>);
+                properties.push(<li key="constant">Must be the value: <pre>{JSON.stringify(type.constant, null, 2)}</pre></li>);
               }
               return properties;
             })()}
