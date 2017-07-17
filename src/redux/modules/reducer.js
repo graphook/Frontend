@@ -11,6 +11,7 @@ import searchInput from './searchInput';
 import mainSearch from './mainSearch';
 import searchResults from './searchResults';
 import object from './object';
+import documentation from './documentation';
 
 
 const createNamedWrapperReducer = (reducerFunction, reducerName) => {
@@ -40,5 +41,6 @@ export default combineReducers({
   setDetails,
   typeDetails,
   profileDetails,
-  object
+  object,
+  documentation
 });
