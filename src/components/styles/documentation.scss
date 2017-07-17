@@ -117,6 +117,7 @@
 
     .docContent {
       max-width: 800px;
+      padding-bottom: 48px;
 
       p {
         font-size: 16px;
@@ -156,6 +157,58 @@
   }
 }
 
+.requestTool {
+  padding: 16px;
+  border: $containerBorder;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  background-color: $white;
+
+  > ul {
+    margin: 0 !important;
+    padding-left: 0 !important;
+  }
+  h2 {
+    margin-bottom: 8px;
+  }
+
+  .topRequestTools {
+    display: flex;
+    margin-bottom: 8px;
+    align-items: center;
+
+    .urlArea {
+      display: flex;
+      padding-left: 8px;
+      padding-right: 8px;
+      flex-grow: 1;
+
+      input {
+        padding-top: 0;
+        height: 21px;
+        padding-left: 0;
+      }
+    }
+  }
+  .requestBody, .responseBody {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    height: 100px;
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+    border: $containerBorder;
+    font-size: 12px;
+    font-family: monospace;
+    padding: 4px;
+    resize: vertical;
+  }
+  .responseBody {
+    margin: 0;
+    color : transparent;
+    text-shadow : 0 0 0 $black;
+  }
+}
 
 
 /*.documentation {

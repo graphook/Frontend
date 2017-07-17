@@ -19,7 +19,7 @@ export default class IntroAuth extends Component {
   }
   render() {
     return (
-      <div id="containerThing" className={s.containerThing}>
+      <div>
         <p>Welcome to Zenow, the platform for creating and sharing data.</p>
         <p>The primary way to interact with information on Zenow is through http requests to our RESTful API (Application Programming Interface). Integrating your project can be done in just a few steps.</p>
 
