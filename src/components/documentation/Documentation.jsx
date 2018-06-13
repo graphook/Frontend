@@ -14,6 +14,7 @@ import SearchTutorial from './pages/SearchTutorial.jsx';
 import CreateSetTutorial from './pages/CreateSetTutorial.jsx';
 import UpdateTutorial from './pages/UpdateTutorial.jsx';
 import CreateTypeTutorial from './pages/CreateTypeTutorial.jsx';
+import RouteCategory from './RouteCategory.jsx';
 
 import s from '../styles/index.scss';
 
@@ -71,7 +72,8 @@ export default class Documentation extends Component {
           DocComponent = specialComponents[cat.specialComponent];
           category = cat;
         } else {
-          DocComponent = 'Not Implemented'
+          DocComponent = RouteCategory;
+          category = cat;
         }
       }
     })

@@ -7,11 +7,11 @@ import data from './tutorialData.js';
 export default () => {
   return (
     <div>
-      <SectionHeader name="Search Items in a Set">Search Items in a Set</SectionHeader>
-      <p>Sometimes you want to find specific items within a set based on parameters. To do this, we can <code>POST</code> a search request and pass our search query through the request body.</p>
-      <p>In the example below, we’re looking for all the cartoon families with the surname "Turner"</p>
-      <RequestTool {...data.searchItems.request} />
-      <p>This is just one example. For more complex search queries, see the (Advanced Search documentation).</p>
+      <SectionHeader name="Simple Search">Simple Search</SectionHeader>
+      <p>One of the simplest ways to search on Zenow is by simply providing a string value via the "query" paramerter, which looks for all objects that contain that word or number.</p>
+      <p>Search requests for objects, types, sets, and items all support the same functionality, but for the purposes of these examples, we'll be searching among items in the a set of cartoon families: <code>/v2/set//item/search</code></p>
+
+      <SectionHeader name="Advanced Search">Advanced Search</SectionHeader>
     </div>
   )
 }

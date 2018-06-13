@@ -78,6 +78,11 @@ export default function reducer(state = initialState, action = {}) {
           routes: categoryRoutes
         })
       });
+      console.log(JSON.stringify({
+        ...state,
+        loaded: true,
+        categories: state.categories.concat(newCategories)
+      }, null, 2));
       return {
         ...state,
         loaded: true,
